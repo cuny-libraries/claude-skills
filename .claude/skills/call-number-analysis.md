@@ -66,16 +66,18 @@ In consortium environments (like CUNY, SUNY, CSU, etc.), local schemes vary by c
 | Feature | LC | SuDoc | Dewey | NLM |
 |---------|-----|-------|-------|-----|
 | **Starts with** | Valid LC letters | Agency stem | 3 digits | W or QS-QZ |
-| **Has colon (:)** | Never* | Almost always | Never | Never |
+| **Has colon (:)** | Almost never* | Almost always | Never | Never |
 | **Class structure** | Letters + number + cutter | Agency.bureau:series | Number + decimal + cutter | Letters + number + cutter |
 
-*\* LC call numbers do not use colons structurally. A colon in an LC-looking call number is almost always SuDoc; very rarely it may be a data entry error. See "The Colon Rule" below.*
+*\* LC call numbers almost never use colons. A colon in an LC-looking call number is almost always SuDoc; very rarely it may be a data entry error. One known exception: some LC Geography/Maps numbers in the G schedule use colons in table notation (e.g., `G1254.N4:2M3` for Manhattan, `G1254.N4:3B8` for Brooklyn). These are exceedingly rare. See "The Colon Rule" below.*
 
 #### SuDoc vs LC: The Colon Rule
 
-**The colon (`:`) is the strongest single indicator of SuDoc classification.** A call number containing a colon is almost always SuDoc. LC call numbers do not use colons as part of their structure, so a colon in what looks like an LC call number is either SuDoc or (very rarely) a data entry error.
+**The colon (`:`) is the strongest single indicator of SuDoc classification.** A call number containing a colon is almost always SuDoc. LC call numbers almost never use colons, so a colon in what looks like an LC call number is usually SuDoc or a data entry error.
 
-**In practice:** Treat a colon as strong evidence of SuDoc, but not absolute proof. If the content before the colon matches a SuDoc agency stem pattern (letter(s) + number.number), it's SuDoc with high confidence. If the colon appears in an otherwise clearly LC-structured call number with no SuDoc stem pattern, flag it for review as a possible error.
+**Known LC exception:** Some Geography/Maps numbers in the G schedule use colons as part of LC table notation (e.g., `G1254.N4:2M3`, `G1254.N4:2S8`, `G1254.N4:3Q4`). These are exceedingly rare and will be misclassified as SuDoc by the script. They are documented here as a known limitation rather than handled in code.
+
+**In practice:** Treat a colon as strong evidence of SuDoc, but not absolute proof. If the content before the colon matches a SuDoc agency stem pattern (letter(s) + number.number), it's SuDoc with high confidence. If the colon appears in an otherwise clearly LC-structured call number with no SuDoc stem pattern, flag it for review as a possible error or a rare LC table notation.
 
 | Call Number | Classification | Why |
 |-------------|---------------|-----|
@@ -352,7 +354,7 @@ In Analytics, use "is between" operator on Normalized Call Number field:
 When analyzing call numbers:
 
 1. [ ] **Check for non-call-numbers first** (notes, instructions, URLs, equipment, format descriptors alone)
-2. [ ] **Look for colons** — presence of `:` strongly indicates SuDoc (very rarely a data entry error)
+2. [ ] **Look for colons** — presence of `:` strongly indicates SuDoc (very rarely a data entry error or LC G-schedule table notation)
 3. [ ] **Examine the starting letters** against valid LC classes (remember: no I, O, W, X, Y in LC)
 4. [ ] **Check for NLM patterns** (W, QS-QZ followed by numbers)
 5. [ ] **Check for LAC patterns** (FC + number, or PS + number ≥ 8000)
@@ -362,6 +364,144 @@ When analyzing call numbers:
 9. [ ] **Flag mismatches** for data quality review
 10. [ ] If working with Analytics data, verify normalization matches expected pattern
 11. [ ] For range queries, construct proper normalized filter values
+
+## Location Codes as Classification Hints
+
+The 852 $$c subfield (location) can help disambiguate borderline call numbers. The Python script classifies based on call number content alone, but during manual review, location codes provide useful context.
+
+**CUNY government documents locations (suggest gov docs classification):**
+
+| Code | Institution | Description | Notes |
+|------|-------------|-------------|-------|
+| DOC | Brooklyn College | Government Documents | |
+| DOCR | Brooklyn College | Government Documents Reference | |
+| DOCS | Brooklyn College | Government Documents (DOCS) | |
+| DCFC | Lehman College | Documents Room | |
+| DOC | Lehman College | Government Document | |
+| DOCRM | Lehman College | Govt. Documents Room | |
+| RDOC | Lehman College | Reference Documents | Ambiguous -- may be reference materials, not gov docs |
+| DCDR | Queens College | Documents CD-ROM | |
+| DCCDR | Queens College | Documents Circulating CD-ROM | |
+| DDVD | Queens College | Documents DVD | |
+| DOC | Queens College | Documents Level 1 | |
+| CBRL0 | City College | Cohen Braille collection, 2nd floor - Gov docs room | Braille collection shelved in gov docs room -- not gov docs |
+| CEUD0 | City College | Cohen E.U Docs, 2nd floor | E.U. documents -- not SuDoc |
+| CIND0 | City College | Cohen International documents, 2nd floor | International documents -- not SuDoc |
+| CNYD0 | City College | Cohen New York City Documents, 2nd floor | NYC documents -- not SuDoc |
+| CNYS0 | City College | Cohen New York State Documents, 2nd floor | NYS documents -- not SuDoc |
+| CUND0 | City College | Cohen U.N. Documents | U.N. documents -- not SuDoc |
+| CUSP0 | City College | Cohen U.S. Docs Pamphlets, 2nd floor - Gov. doc. room | SuDoc |
+| CUSD0 | City College | Cohen U.S. Documents, 2nd floor - Gov. Doc. room | SuDoc |
+| CUCD0 | City College | Cohen U.S. Documents CD-ROM, 2nd floor | SuDoc |
+| CUSM0 | City College | Cohen U.S. Documents Maps, 2nd floor | SuDoc |
+| CDMC0 | City College | Cohen U.S. Documents Media Collection, 2nd floor | SuDoc |
+| CDMF0 | City College | Cohen U.S. Documents Microfiche, 2nd floor | SuDoc |
+| CDFL0 | City College | Cohen U.S. Documents Microfilm, 2nd floor | SuDoc |
+| CELE0 | City College | U.S. Documents online | SuDoc |
+| SUSD | City College | Science/Engineering U.S. Documents | SuDoc |
+| SUSM0 | City College | Science/Engineering U.S. Documents Microfiche | SuDoc |
+
+**Note:** Only U.S. federal documents use SuDoc classification. E.U., U.N., state, and city documents have their own schemes. Not all items in gov docs locations are government documents -- some locations house LC-classified materials alongside them. The location is a hint, not a guarantee.
+
+**CUNY special collections / archives locations (may suggest local scheme or shelving control):**
+
+| Code | Institution | Description | Notes |
+|------|-------------|-------------|-------|
+| SPEC | Baruch College | Archives 5th Floor | |
+| HESS | Brooklyn College | Special Collections - Hess | Named collection |
+| SP | Brooklyn College | Special Collections | |
+| SPXB | Brooklyn College | Special Collections - Brooklyniana | Named collection |
+| SPXBC | Brooklyn College | Special Collections - CUNY (XBC) | |
+| SPXR | Brooklyn College | Special Collections - Rare (XR) | |
+| XBCX | Brooklyn College | Special Collections - St. Pub. (XBCX) | |
+| ARCH | College of Staten Island | Archives Storage | |
+| ARCHS | College of Staten Island | Archives | |
+| RBCO | College of Staten Island | CSI Rare Books Collection | |
+| SPECR | College of Staten Island | Special Collections-Reserves | |
+| ARCH | CUNY Graduate Center | Archives | |
+| BUTTR | CUNY Graduate Center | Buttinger Rare Books | Named collection |
+| OLDI | CUNY Graduate Center | Old Imprints Collection | Named collection |
+| SPEC | CUNY Graduate Center | Special Collections | |
+| SPECF | CUNY Graduate Center | Special Collections Folio | |
+| ARCH | Hostos Community College | Archives | |
+| ARCH | Hunter College | Archives | |
+| COWE | Hunter College | Cooperman Library Archives, 4th floor | |
+| MFULL | Hunter College | Cooperman Library Archives, 4th floor | |
+| SLSPE | Hunter College | Zabar Art Library, Special | |
+| SPEC | Hunter College | Cooperman Library Special Collection | |
+| SPEC | Hunter College | Special Collections | |
+| RARE | Hunter College | Silberman Bldg Library Rare-book | |
+| SPEC | John Jay College | Open Special Collections | |
+| SPMIC | John Jay College | Special Collection Microfilm | |
+| SPCL | John Jay College | Special Collections Room | |
+| INAR | LaGuardia Community College | Institutional Archives | |
+| SPEC | Lehman College | Special Collections | |
+| SPECM | Lehman College | Special Collections Microforms | |
+| SPEC | Medgar Evers College | Special Collections | |
+| ARCH | New York City College of Technology | 5th Floor, Archives | |
+| ARCCS | Queens College | Archives Rosenthal Level 3 | |
+| ARCH | Queens College | Archives Rosenthal Level 3 | |
+| ARCZN | Queens College | Archives Rosenthal level 3 | |
+| ASPEC | Queens College | Art Rare Book Collection Level 6 | |
+| MXSTR | Queens College | Rare Collection | |
+| ASPC0 | City College | Architecture: Special collection | |
+| CARV0 | City College | Cohen Archives, 5th floor | |
+| CSPC0 | City College | Cohen Special Collections, Archives 5th floor | |
+| CSCC0 | City College | Cohen Special Collections Costume, Archives 5th floor | Named collection |
+
+**Note:** Most special collections use standard LC classification -- the items are just housed separately. However, archives and named collections may use local numbering schemes, accession numbers, or collection-specific codes. If a call number from a special collections location doesn't match any known scheme, it may be an intentional local arrangement rather than an error.
+
+**CUNY AV/media locations (suggest shelving control or not-a-call-number):**
+
+AV/media locations fall into three categories with different classification implications:
+
+*Equipment/device locations* -- Items here are not books or media. Call numbers are often descriptive labels (e.g., "Digital Projector", "Math Class Laptop Charger") rather than classification numbers. These suggest **not a call number**.
+
+| Code pattern | Institutions | Examples |
+|------|-------------|-------------|
+| LAP, LAPT, LATP | Baruch, BMCC, Bronx CC, CSI, GC, Hostos, LaGuardia, Queens, York | Laptops (various loan periods) |
+| CALC, CALCS, RESEMCAL | Baruch, BMCC, Bronx CC, CSI, LaGuardia, City College | Calculators |
+| IPAD, IPD7D, TAIPC | Bronx CC, LaGuardia, Lehman, Hunter | iPads/tablets |
+| KINDA, KINDB, KINDC | Bronx CC | Kindles and accessories |
+
+*Format-specific media locations* -- Items here typically use format + accession number shelving (e.g., "DVD 2847", "CD 1811"). These suggest **shelving control number (indicator 4)**.
+
+| Code | Institution | Description |
+|------|-------------|-------------|
+| DVD | BMCC, Bronx CC, Hunter, Kingsborough, LaGuardia, Queens | DVDs |
+| CD | LaGuardia, Queens | CDs |
+| CDS, CDX | CUNY Graduate Center | CDs (circulating/non-circulating) |
+| DVDS, DVDX | CUNY Graduate Center | DVDs (circulating/non-circulating) |
+| CASS, CAS, MCAS | CUNY Graduate Center, Queens | Cassettes |
+| ROM, CDR, MUCDR | CUNY Graduate Center, Queens | CD-ROMs |
+| VID, VIDE, VIDEO | Brooklyn, CSI, GC, Hunter, Lehman, Queens, York | Videos |
+| 2HDVD | Hunter | 2 Hour DVD |
+| DISCS | Bronx CC | Videodiscs |
+| LASER | Queens College | Laserdiscs |
+| SLID | Brooklyn College | Slides |
+| PHO, PHON | Brooklyn College | Phonodiscs |
+| AUD3H, AUD6H, AUDCR, AUDSP | Bronx CC | Audio (various loan periods) |
+| AUDIO | New York City College of Technology | Audio |
+| ACDR1, CCDR1, MCDR1, SCDR1 | City College | CD-ROMs by library branch |
+| CCD1, MCD0, MCD7D | City College | CDs by library branch |
+| CVID1, WVID0, WVD3H, AVD7D, MVD4H, SVD2H | City College | Videos by library branch |
+| WCD1 | City College | Center for Worker Education: CD Collection |
+
+*General AV/media locations* -- Items here may use LC classification, format-based shelving, or local schemes. The location alone doesn't determine the classification.
+
+| Code | Institution | Description |
+|------|-------------|-------------|
+| AV | Baruch, CUNY Law, Hostos, Hunter, NYC Tech, Queensborough | Audio-Visual (general) |
+| MEDIA | GC, Guttman, John Jay, Kingsborough, Medgar Evers, City College | Media collection |
+| MULTI | Brooklyn College | Multimedia |
+| RESM, RESMD | CUNY Graduate Center, Hostos | Reserve media |
+| STKAV | Queensborough CC | Stacks 2nd Fl., DVDs |
+
+**Note:** Items in format-specific media locations often use shelving control numbers (format + accession), but some may have LC call numbers. Items in equipment locations are almost never real call numbers.
+
+*Add periodicals locations as needed.*
+
+**Known limitation:** Some SuDoc numbers lack colons (e.g., `A 1.2 F 51/3`). These are structurally indistinguishable from LC call numbers based on content alone. A location code like DOCS or CUSP0 may be the only way to identify them as SuDoc.
 
 ## Quick Reference: Classification Decision Tree
 
@@ -374,7 +514,7 @@ START
   │
   ├─ AV/media shelving (DVD/CD/VHS/Video/Fiche + number)? → Shelving control (indicator 4)
   │
-  ├─ [Strip shelving prefixes: OVERSIZE, DOCS, FOLIO, REF, etc.]
+  ├─ [Strip shelving prefixes: OVERSIZE, DOCS, FOLIO, REF, SPEC, etc.]
   │
   ├─ Contains colon (:)? → Likely SUDOC (indicator 3)
   │   └─ If no SuDoc stem pattern, flag for review (may be data entry error)
