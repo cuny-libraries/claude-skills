@@ -6,6 +6,7 @@ Shared [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills for 
 
 - **[Alma API](.claude/skills/alma-api.md)** — Ex Libris Alma REST API patterns, endpoints, and CUNY-specific conventions
 - **[Call Number Analysis](.claude/skills/call-number-analysis.md)** — Classify and validate LC, Dewey, SuDoc, NLM, and LAC call numbers from MARC 852 fields
+- **[Primo API](.claude/skills/primo-api.md)** — Primo VE Search API and discovery layer endpoints for CUNY
 
 ## What Are Skills?
 
