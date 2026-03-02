@@ -37,9 +37,10 @@ If you receive:
 ROUTING_ERROR: No routing configured for your institution. Please contact Alma Support.
 ```
 
-This is a **server-side configuration issue**, not a code problem. Despite what the error
-message says, contact **Primo Support** (not Alma Support). Ex Libris must configure API
+This is a **server-side configuration issue**, not a code problem. Ex Libris must configure API
 routing for your institution. As of early 2026, all CUNY IZs have Primo API routing configured.
+If you encounter this error at CUNY, open a support case with Ex Libris (support.proquest.com)
+or open a ticket with the CUNY Office of Library Services (cuny-ols.libanswers.com).
 
 Other common causes of this error:
 - Passing `vid=01CUNY_XX:CUNY_XX` instead of just `01CUNY_XX:CUNY_XX` as the vid value
