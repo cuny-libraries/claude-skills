@@ -258,7 +258,7 @@ code in capital letters:
 ### Tabs and Scopes
 | Tab              | Scope             | Description |
 |------------------|-------------------|-------------|
-| `Everything`     | `IZ_CI_AW`        | All resources — local, CDI, and allied works |
+| `Everything`     | `IZ_CI_AW`        | All resources — local, CDI, and Academic Works (CUNY's institutional repository) |
 | `NZPhysical`     | `NZPhysical`      | Physical items across the CUNY Network Zone |
 | `IZ_NZ_SUNY`     | `IZ_CI_AW_NZ_SUNY`| CUNY + SUNY resources |
 | `CourseReserves`  | `CourseReserves`   | Course reserves (available at some campuses) |
